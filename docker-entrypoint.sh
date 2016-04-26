@@ -2,9 +2,18 @@
 
 set -e
 
-while [ ! -f "/data/ssl/dh4096.pem" ]; do 
-   sleep 2
+for i in {30..0}; do
+    if [ -f "/data/ssl/dh4096.pem" ]; then 
+        break
+    fi
+    sleep 1
 done
+if [ "$i" = 0 ]; then
+    echo "* initalizing certificate"    
+    mkdir /data/ssl
+    ./gencert.sh /data/ssl/
+    openssl dhparam -dsaparam -out /data/ssl/dh4096.pem 4096    
+fi
 
 # if command starts with an option, prepend dovecot
 if [ "${1:0:1}" = '-' ]; then

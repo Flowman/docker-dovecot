@@ -10,9 +10,9 @@ RUN \
 
 COPY ./dovecot /etc/dovecot
 
-COPY ./docker-entrypoint.sh /
+COPY ./docker-entrypoint.sh ./gencert.sh /
 
-RUN chmod +x /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh /gencert.sh
 
 VOLUME ["/data"]
 

@@ -10,7 +10,7 @@ RUN \
 
 COPY ./dovecot /etc/dovecot
 
-COPY ./docker-entrypoint.sh ./gencert.sh /
+COPY ./gencert.sh ./docker-entrypoint.sh /
 
 RUN chmod +x /docker-entrypoint.sh /gencert.sh
 

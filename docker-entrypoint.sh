@@ -2,7 +2,7 @@
 
 set -e
 
-for i in {30..0}; do
+for i in 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0; do
     if [ -f "/data/ssl/dh4096.pem" ]; then 
         break
     fi
@@ -12,7 +12,6 @@ if [ "$i" = 0 ]; then
     echo "* initalizing certificate"    
     mkdir /data/ssl
     ./gencert.sh /data/ssl/
-    openssl dhparam -dsaparam -out /data/ssl/dh4096.pem 4096    
 fi
 
 # if command starts with an option, prepend dovecot
@@ -28,13 +27,14 @@ if [ "$1" = 'dovecot' ]; then
         exit 1
     fi
 
-    # link in certs
-    if [ ! -f /etc/dovecot/private/dovecot.pem ] && [ -e /data/ssl/server.key ]; then
-        mkdir /etc/dovecot/private 2> /dev/null
-        ln -s /data/ssl/server.key /etc/dovecot/private/dovecot.pem 2> /dev/null
-    fi  
-    if [ ! -f /etc/dovecot/dovecot.pem ] && [ -e /data/ssl/server.crt ]; then
-        ln -s /data/ssl/server.crt /etc/dovecot/dovecot.pem 2> /dev/null
+    # link in certs and remove alpine generated once
+    rm /etc/ssl/dovecot/server.key /etc/ssl/dovecot/server.pem
+    ln -s /data/ssl/server.key /etc/ssl/dovecot/server.key 2> /dev/null
+    ln -s /data/ssl/server.crt /etc/ssl/dovecot/server.pem 2> /dev/null
+
+    # set hostname for dovecot ehlo
+    if [ ! -z "$HOSTNAME" ]; then
+        export DOVECOT_HOSTNAME=$HOSTNAME
     fi
 
     if [ ! -f "/etc/dovecot/configured" ]; then

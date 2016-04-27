@@ -29,9 +29,13 @@ if [ "$1" = 'dovecot' ]; then
     fi
 
     # link in certs
-    mkdir /etc/dovecot/private
-    ln -s /data/ssl/server.crt /etc/dovecot/dovecot.pem 2> /dev/null
-    ln -s /data/ssl/server.key /etc/dovecot/private/dovecot.pem 2> /dev/null
+    if [ ! -f /etc/dovecot/private/dovecot.pem ] && [ -e /data/ssl/server.key ]; then
+        mkdir /etc/dovecot/private 2> /dev/null
+        ln -s /data/ssl/server.key /etc/dovecot/private/dovecot.pem 2> /dev/null
+    fi  
+    if [ ! -f /etc/dovecot/dovecot.pem ] && [ -e /data/ssl/server.crt ]; then
+        ln -s /data/ssl/server.crt /etc/dovecot/dovecot.pem 2> /dev/null
+    fi
 
     if [ ! -f "/etc/dovecot/configured" ]; then
         echo connect = host=$MYSQL_HOST dbname=$MYSQL_DATABASE user=$MYSQL_USER password=$MYSQL_PASSWORD >> /etc/dovecot/dovecot-sql.conf.ext

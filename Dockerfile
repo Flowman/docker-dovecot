@@ -5,7 +5,7 @@ RUN \
 		dovecot \
 		dovecot-mysql \
 		dovecot-pigeonhole-plugin \
-	&& mkdir /data \
+	&& mkdir -p /data/domains \
 	&& chown mail:mail /data
 
 COPY ./dovecot /etc/dovecot
